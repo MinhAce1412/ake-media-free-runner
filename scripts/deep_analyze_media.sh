@@ -44,6 +44,27 @@ python scripts/refine_scene_evidence.py "$MEDIA" --evidence output/deep/deep_evi
 python scripts/refine_multimodal_evidence.py "$MEDIA" --evidence output/deep/deep_evidence.json --out output/deep
 python scripts/asr_hallucination_guard.py --evidence output/deep/deep_evidence.json --out output/deep
 
+# Optional zero-shot semantic SFX check around only suspicious boundaries/energy changes.
+# This remains candidate evidence, never an exact-effect claim by itself.
+CLAP_PYTHON="${AKE_CLAP_PYTHON:-}"
+if [[ -n "$CLAP_PYTHON" && -x "$CLAP_PYTHON" ]]; then
+  "$CLAP_PYTHON" scripts/clap_sfx_refine.py "$MEDIA" --evidence output/deep/deep_evidence.json --out output/deep || true
+fi
+[[ -s output/deep/clap_sfx_candidates.json ]] || printf '%s\n' '{"status":"unavailable","results":[],"rule":"Optional CLAP evidence unavailable; do not guess SFX."}' > output/deep/clap_sfx_candidates.json
+python - <<'PY'
+import json
+p='output/deep/deep_evidence.json'; cp='output/deep/clap_sfx_candidates.json'
+d=json.load(open(p,encoding='utf-8')); c=json.load(open(cp,encoding='utf-8'))
+d['clap_sfx_refined']={
+  'status':c.get('status'),
+  'tested_windows':len(c.get('results',[]) or []),
+  'accepted_candidate_count':sum(1 for x in (c.get('results',[]) or []) if x.get('accepted_as_candidate')),
+  'file':'clap_sfx_candidates.json',
+  'rule':'CLAP labels are semantic candidates only; exact SFX identity requires corroboration.'
+}
+json.dump(d,open(p,'w',encoding='utf-8'),ensure_ascii=False,indent=2)
+PY
+
 # Optional best-effort exact music candidate. It is never required for success and never overrides UNKNOWN without a match.
 SHAZAM_PYTHON="${AKE_SHAZAM_PYTHON:-}"
 if [[ -n "$SHAZAM_PYTHON" && -x "$SHAZAM_PYTHON" ]]; then
@@ -57,6 +78,7 @@ fi
 [[ -s output/deep/editor_timeline_evidence.json ]] || { echo 'editor timeline evidence missing' >&2; exit 27; }
 [[ -s output/deep/transcript_refined.json ]] || { echo 'refined transcript missing' >&2; exit 28; }
 [[ -s output/deep/audio_sfx_refined.json ]] || { echo 'refined SFX evidence missing' >&2; exit 29; }
+[[ -s output/deep/clap_sfx_candidates.json ]] || { echo 'CLAP evidence placeholder missing' >&2; exit 30; }
 [[ -s output/deep/music_identification.json ]] || printf '%s\n' '{"status":"UNKNOWN","track_name":"UNKNOWN","rule":"Music recognition unavailable; exact track remains UNKNOWN."}' > output/deep/music_identification.json
 
 # Source media is transient. Never upload it as an artifact.
