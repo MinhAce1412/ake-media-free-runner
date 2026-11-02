@@ -41,14 +41,17 @@ if [[ "$END" != "0" && -n "$END" ]]; then
 fi
 python scripts/deep_editor_analysis.py "${ARGS[@]}"
 python scripts/refine_scene_evidence.py "$MEDIA" --evidence output/deep/deep_evidence.json --out output/deep
-# Best-effort only: a ShazamIO hit is an external candidate, never an automatically verified track.
-python scripts/music_candidate_id.py "$MEDIA" --evidence output/deep/deep_evidence.json --out output/deep || true
+# Optional best-effort music candidate: separate venv avoids NumPy 2.x conflict with TensorFlow/YAMNet.
+SHAZAM_PYTHON="${AKE_SHAZAM_PYTHON:-}"
+if [[ -n "$SHAZAM_PYTHON" && -x "$SHAZAM_PYTHON" ]]; then
+  "$SHAZAM_PYTHON" scripts/music_candidate_id.py "$MEDIA" --evidence output/deep/deep_evidence.json --out output/deep || true
+fi
 
 [[ -s output/deep/deep_evidence.json ]] || { echo 'deep_evidence.json missing' >&2; exit 23; }
 [[ -s output/deep/hook_contact_sheet.jpg ]] || { echo 'hook contact sheet missing' >&2; exit 24; }
 [[ -s output/deep/timeline_contact_sheet.jpg ]] || { echo 'timeline contact sheet missing' >&2; exit 25; }
 [[ -s output/deep/scene_boundary_index.json ]] || { echo 'scene boundary index missing' >&2; exit 26; }
-[[ -s output/deep/music_identification.json ]] || printf '%s\n' '{"status":"UNKNOWN","track_name":"UNKNOWN","rule":"Music recognition did not run; exact track remains UNKNOWN."}' > output/deep/music_identification.json
+[[ -s output/deep/music_identification.json ]] || printf '%s\n' '{"status":"UNKNOWN","track_name":"UNKNOWN","rule":"Music recognition unavailable; exact track remains UNKNOWN."}' > output/deep/music_identification.json
 
 # Source media is transient. Never upload it as an artifact.
 rm -rf work/deep
