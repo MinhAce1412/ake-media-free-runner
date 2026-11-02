@@ -1,0 +1,110 @@
+name: Ake Deep Editor Analyze
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'Public YouTube/TikTok/Facebook video URL'
+        required: true
+        type: string
+      content_id:
+        description: 'Stable content/sample id'
+        required: true
+        type: string
+      start:
+        description: 'Analysis start second'
+        required: false
+        default: '0'
+        type: string
+      end:
+        description: 'Analysis end second; 0 means source end, max 180s per job'
+        required: false
+        default: '0'
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - 'deep_request.json'
+      - 'scripts/deep_*'
+      - 'scripts/deep_requirements.txt'
+      - '.github/workflows/deep-editor-analysis.yml'
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    env:
+      TFHUB_CACHE_DIR: ${{ github.workspace }}/.cache/tfhub
+      HF_HOME: ${{ github.workspace }}/.cache/huggingface
+      AKE_WHISPER_MODEL: small
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve deep request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            URL='${{ inputs.url }}'
+            CONTENT_ID='${{ inputs.content_id }}'
+            MEDIA_URL=''
+            START='${{ inputs.start }}'
+            END='${{ inputs.end }}'
+            SHOULD_RUN='true'
+          else
+            URL="$(python -c 'import json; d=json.load(open("deep_request.json", encoding="utf-8")); print(d.get("url", ""))')"
+            CONTENT_ID="$(python -c 'import json; d=json.load(open("deep_request.json", encoding="utf-8")); print(d.get("content_id", ""))')"
+            MEDIA_URL="$(python -c 'import json; d=json.load(open("deep_request.json", encoding="utf-8")); print(d.get("media_url", ""))')"
+            START="$(python -c 'import json; d=json.load(open("deep_request.json", encoding="utf-8")); print(d.get("start", 0))')"
+            END="$(python -c 'import json; d=json.load(open("deep_request.json", encoding="utf-8")); print(d.get("end", 0))')"
+            SHOULD_RUN="$(python -c 'import json; d=json.load(open("deep_request.json", encoding="utf-8")); print(str(d.get("run", False)).lower())')"
+          fi
+          echo "should_run=$SHOULD_RUN" >> "$GITHUB_OUTPUT"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "content_id=$CONTENT_ID" >> "$GITHUB_OUTPUT"
+          echo "media_url=$MEDIA_URL" >> "$GITHUB_OUTPUT"
+          echo "start=$START" >> "$GITHUB_OUTPUT"
+          echo "end=$END" >> "$GITHUB_OUTPUT"
+          if [[ "$SHOULD_RUN" == "true" ]]; then
+            [[ -n "$URL" && -n "$CONTENT_ID" ]]
+          fi
+
+      - uses: actions/setup-python@v5
+        if: steps.request.outputs.should_run == 'true'
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: scripts/deep_requirements.txt
+
+      - name: Cache open-source models
+        if: steps.request.outputs.should_run == 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            .cache/huggingface
+            .cache/tfhub
+          key: ake-deep-models-v1-${{ runner.os }}
+
+      - name: Install free media/editor tools
+        if: steps.request.outputs.should_run == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg jq libsndfile1 tesseract-ocr tesseract-ocr-eng tesseract-ocr-vie libchromaprint-tools
+          python -m pip install --upgrade pip
+          python -m pip install -r scripts/deep_requirements.txt yt-dlp
+
+      - name: Acquire media and build deep editor evidence
+        if: steps.request.outputs.should_run == 'true'
+        run: bash scripts/deep_analyze_media.sh '${{ steps.request.outputs.url }}' '${{ steps.request.outputs.content_id }}' '${{ steps.request.outputs.media_url }}' '${{ steps.request.outputs.start }}' '${{ steps.request.outputs.end }}'
+
+      - name: Upload deep evidence only
+        if: steps.request.outputs.should_run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ake-deep-${{ steps.request.outputs.content_id }}
+          path: output/deep/
+          if-no-files-found: error
+          retention-days: 3
