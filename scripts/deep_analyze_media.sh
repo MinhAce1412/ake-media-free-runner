@@ -16,17 +16,36 @@ case "$URL" in
 esac
 
 ACQUISITION="platform_direct"
+ANALYSIS_START="$START"
+ANALYSIS_END="$END"
 if [[ -n "$DIRECT_MEDIA_URL" ]]; then
   case "$DIRECT_MEDIA_URL" in
     https://storage.googleapis.com/vidiq-user-videos/*) ;;
     *) echo "Unsupported bridge media host" >&2; exit 21 ;;
   esac
-  ACQUISITION="vidiq_zero_credit_bridge"
-  curl --fail --location --retry 2 --connect-timeout 20 --max-time 240 "$DIRECT_MEDIA_URL" -o work/deep/source.mp4
+
+  # Zero-credit bridge optimization: when the requested window starts at source 0,
+  # stream only the requested prefix instead of downloading a long source in full.
+  # Timestamps remain identical to the source because there is no start offset.
+  if [[ "$START" == "0" && "$END" != "0" && -n "$END" ]]; then
+    ACQUISITION="vidiq_zero_credit_bridge_windowed_prefix"
+    ffmpeg -nostdin -loglevel error -y \
+      -i "$DIRECT_MEDIA_URL" -t "$END" \
+      -map '0:v:0?' -map '0:a:0?' -c copy -movflags +faststart \
+      work/deep/source.mp4
+    ANALYSIS_START="0"
+    ANALYSIS_END="0"
+    printf '%s\n' "{\"mode\":\"prefix_window\",\"original_start\":0,\"original_end\":$END,\"timestamp_rule\":\"local timestamps equal source timestamps because original_start=0\"}" > output/deep/source_window.json
+  else
+    ACQUISITION="vidiq_zero_credit_bridge"
+    curl --fail --location --retry 2 --connect-timeout 20 --max-time 240 "$DIRECT_MEDIA_URL" -o work/deep/source.mp4
+    printf '%s\n' "{\"mode\":\"full_media\",\"original_start\":$START,\"original_end\":$END,\"timestamp_rule\":\"analysis uses original source timeline\"}" > output/deep/source_window.json
+  fi
 else
   yt-dlp --no-playlist --no-overwrites --restrict-filenames \
     -f 'bv*[height<=1080]+ba/b[height<=1080]/b' --merge-output-format mp4 \
     -o 'work/deep/%(id)s.%(ext)s' "$URL"
+  printf '%s\n' "{\"mode\":\"platform_direct\",\"original_start\":$START,\"original_end\":$END,\"timestamp_rule\":\"analysis uses original source timeline\"}" > output/deep/source_window.json
 fi
 
 MEDIA="$(find work/deep -maxdepth 1 -type f \( -name '*.mp4' -o -name '*.webm' -o -name '*.mkv' \) | head -n 1)"
@@ -35,9 +54,9 @@ MEDIA="$(find work/deep -maxdepth 1 -type f \( -name '*.mp4' -o -name '*.webm' -
 ffprobe -v quiet -print_format json -show_format -show_streams "$MEDIA" > output/deep/ffprobe.json
 printf '%s\n' "$ACQUISITION" > output/deep/acquisition.txt
 
-ARGS=("$MEDIA" --content-id "$ID" --source-url "$URL" --out output/deep --start "$START")
-if [[ "$END" != "0" && -n "$END" ]]; then
-  ARGS+=(--end "$END")
+ARGS=("$MEDIA" --content-id "$ID" --source-url "$URL" --out output/deep --start "$ANALYSIS_START")
+if [[ "$ANALYSIS_END" != "0" && -n "$ANALYSIS_END" ]]; then
+  ARGS+=(--end "$ANALYSIS_END")
 fi
 python scripts/deep_editor_analysis.py "${ARGS[@]}"
 python scripts/refine_scene_evidence.py "$MEDIA" --evidence output/deep/deep_evidence.json --out output/deep
