@@ -1,9 +1,1 @@
-{
-  "run": true,
-  "url": "https://www.youtube.com/watch?v=UJ39Vhf60BI",
-  "content_id": "youtube-UJ39Vhf60BI-seg-2985-3135-guarded",
-  "media_url": "https://storage.googleapis.com/vidiq-user-videos/3c017ffe-d104-41ff-833d-c3254604cd42/ba1a8e3f-6f7d-4d38-9232-5fb079badeb7.mp4?GoogleAccessId=ai-proxy-20261001%40studious-pen-429.vid.io.iam.gserviceaccount.com&Expires=1794230506&Signature=ZWZsW6uHH4JFBHXTrIpXh5BamCTVq1ZHKHGqFziF8hOqs%2FX6qqSTTxqCWyxd6uHn1gFgPDO9XXCFcKifWd4%2B1QH7FS2NGMJrDsZ1JvT2TZdbJ2SCHKsG3XPWnbpdDiGnwpCibpLhm3QCgN7AWbp%2FDLke7r%2FQu7%2BFWbQESSpj5kVJEfC88yFhe0s9LeJOn%2FLCV4eJvMldZXQ6KX9hizH01xFbdNM9FPpWQRx5b0ZtCs4fZBlvNS5twGD2%2F%2FBqsv21aTQChmUlgCxBP12XWQ74D1l3dfyGUTxSkimxGB%2BqPCRz%2Bv3WN9Hua28%2BgdWtrZiQ88CXBY1Tut9xCtImshxyjw%3D%3D",
-  "start": 2985,
-  "end": 3135,
-  "expected_duration": 5089
-}
+{"run":false,"url":"","content_id":"","media_url":"","start":0,"end":0,"expected_duration":0,"enable_clap":false,"enable_music_id":false}

@@ -29,8 +29,10 @@ jobs:
           START="$(python -c 'import json; d=json.load(open("deep_request.json")); print(d.get("start",0))')"
           END="$(python -c 'import json; d=json.load(open("deep_request.json")); print(d.get("end",0))')"
           EXPECTED="$(python -c 'import json; d=json.load(open("deep_request.json")); print(d.get("expected_duration",0))')"
+          CLAP="$(python -c 'import json; d=json.load(open("deep_request.json")); print(str(d.get("enable_clap",False)).lower())')"
+          MUSIC="$(python -c 'import json; d=json.load(open("deep_request.json")); print(str(d.get("enable_music_id",False)).lower())')"
           RUN="$(python -c 'import json; d=json.load(open("deep_request.json")); print(str(d.get("run",False)).lower())')"
-          echo "should_run=$RUN" >> "$GITHUB_OUTPUT"; echo "url=$URL" >> "$GITHUB_OUTPUT"; echo "content_id=$ID" >> "$GITHUB_OUTPUT"; echo "media_url=$MEDIA" >> "$GITHUB_OUTPUT"; echo "start=$START" >> "$GITHUB_OUTPUT"; echo "end=$END" >> "$GITHUB_OUTPUT"; echo "expected_duration=$EXPECTED" >> "$GITHUB_OUTPUT"
+          echo "should_run=$RUN" >> "$GITHUB_OUTPUT"; echo "url=$URL" >> "$GITHUB_OUTPUT"; echo "content_id=$ID" >> "$GITHUB_OUTPUT"; echo "media_url=$MEDIA" >> "$GITHUB_OUTPUT"; echo "start=$START" >> "$GITHUB_OUTPUT"; echo "end=$END" >> "$GITHUB_OUTPUT"; echo "expected_duration=$EXPECTED" >> "$GITHUB_OUTPUT"; echo "enable_clap=$CLAP" >> "$GITHUB_OUTPUT"; echo "enable_music_id=$MUSIC" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-python@v5
         if: steps.request.outputs.should_run == 'true'
         with: {python-version: '3.11', cache: 'pip', cache-dependency-path: scripts/deep_requirements.txt}
@@ -42,18 +44,18 @@ jobs:
             .cache/huggingface
             .cache/tfhub
           key: ake-deep-models-v2-${{ runner.os }}
-      - name: Install free media/editor tools
+      - name: Install free multimodal core
         if: steps.request.outputs.should_run == 'true'
         run: |
           sudo apt-get update && sudo apt-get install -y ffmpeg jq libsndfile1 tesseract-ocr tesseract-ocr-eng tesseract-ocr-vie libchromaprint-tools
           python -m pip install --upgrade pip && python -m pip install -r scripts/deep_requirements.txt yt-dlp
-      - name: Install optional free music recognizer separately
-        if: steps.request.outputs.should_run == 'true'
+      - name: Install optional free music recognizer
+        if: steps.request.outputs.should_run == 'true' && steps.request.outputs.enable_music_id == 'true'
         continue-on-error: true
         run: |
           python -m venv .shazam-venv && .shazam-venv/bin/python -m pip install --upgrade pip && .shazam-venv/bin/python -m pip install shazamio==0.8.1
-      - name: Install optional free CLAP SFX classifier separately
-        if: steps.request.outputs.should_run == 'true'
+      - name: Install optional free CLAP SFX classifier
+        if: steps.request.outputs.should_run == 'true' && steps.request.outputs.enable_clap == 'true'
         continue-on-error: true
         run: |
           python -m venv .clap-venv && .clap-venv/bin/python -m pip install --upgrade pip && .clap-venv/bin/python -m pip install torch --index-url https://download.pytorch.org/whl/cpu && .clap-venv/bin/python -m pip install -r scripts/clap_requirements.txt
