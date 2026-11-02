@@ -27,6 +27,8 @@ on:
       - 'deep_request.json'
       - 'scripts/deep_*'
       - 'scripts/deep_requirements.txt'
+      - 'scripts/refine_scene_evidence.py'
+      - 'scripts/music_candidate_id.py'
       - '.github/workflows/deep-editor-analysis.yml'
 
 jobs:
@@ -39,6 +41,7 @@ jobs:
       TFHUB_CACHE_DIR: ${{ github.workspace }}/.cache/tfhub
       HF_HOME: ${{ github.workspace }}/.cache/huggingface
       AKE_WHISPER_MODEL: small
+      AKE_SHAZAM_PYTHON: ${{ github.workspace }}/.shazam-venv/bin/python
     steps:
       - uses: actions/checkout@v4
 
@@ -95,6 +98,14 @@ jobs:
           sudo apt-get install -y ffmpeg jq libsndfile1 tesseract-ocr tesseract-ocr-eng tesseract-ocr-vie libchromaprint-tools
           python -m pip install --upgrade pip
           python -m pip install -r scripts/deep_requirements.txt yt-dlp
+
+      - name: Install optional free music recognizer separately
+        if: steps.request.outputs.should_run == 'true'
+        continue-on-error: true
+        run: |
+          python -m venv .shazam-venv
+          .shazam-venv/bin/python -m pip install --upgrade pip
+          .shazam-venv/bin/python -m pip install shazamio==0.8.1
 
       - name: Acquire media and build deep editor evidence
         if: steps.request.outputs.should_run == 'true'
