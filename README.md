@@ -1,43 +1,69 @@
 # Ake Media Free Runner
 
-Runner miễn phí để Ake kiểm tra **hình ảnh thật** của video public phục vụ nghiên cứu content/đối thủ.
+Runner miễn phí để Ake **xem, nghe và phân tích** video public phục vụ nghiên cứu content/đối thủ. Repo chỉ chứa code và evidence phân tích; không dùng để reupload nội dung.
 
-## Cách hoạt động
+## Hai tầng
+
+### FAST — sàng lọc
+- Metadata/public metrics.
+- 12 frame + contact sheet khi cần xác minh hình.
+- Dùng để chọn video nào đáng tốn công phân tích sâu.
+
+### DEEP — mổ xẻ như editor
+Chỉ chạy cho video đáng học hoặc content Minh sắp áp dụng.
+
+Pipeline DEEP hiện gồm:
+- **PySceneDetect**: phát hiện scene/cut.
+- **OpenCV**: theo dõi biến đổi hình, motion spike, freeze/zoom candidate.
+- **Tesseract vie+eng**: OCR chữ/caption/overlay ở các frame mẫu.
+- **faster-whisper CPU INT8**: transcript tiếng Việt có timestamp.
+- **librosa**: onset, silence, energy và BPM ước tính của soundtrack trộn.
+- **YAMNet / AudioSet 521 classes**: xác suất speech/music/laughter/click/impact/whoosh/game audio và các audio event khác.
+- **FFmpeg/FFprobe**: decode, audio extraction, codec/duration.
+
+Một DEEP job phân tích tối đa 180 giây. Video dài hơn phải chia chunk/chapter để giữ thời gian chạy và free compute hợp lý.
+
+## Cách lấy video
 
 1. Ake có URL video public.
 2. Thử đường public trực tiếp trước.
 3. Nếu GitHub bị YouTube chặn anti-bot/login, **không dùng cookie, tài khoản hay cách vượt CAPTCHA**.
-4. Khi có thể, dùng `vidIQ video_upload` giá **0 credit** làm cầu chuyển tạm sang MP4.
-5. GitHub Actions dùng FFmpeg tạo **12 frame theo thứ tự thời gian + 1 contact sheet 4×3**.
-6. Artifact chỉ giữ bằng chứng phân tích; **không lưu video nguồn**.
-7. Chỉ sau khi Ake thực sự mở frame/contact sheet mới được ghi `VISUAL_REVIEW`.
+4. Khi có thể, dùng `vidIQ video_upload` giá **0 credit** làm cầu chuyển MP4 tạm.
+5. GitHub Actions xử lý media rồi xóa file nguồn trước khi upload artifact.
 
 ## Mức bằng chứng
 
-- `METADATA_ONLY`: chỉ biết link/title/số liệu.
-- `TRANSCRIPT_L2`: biết lời nói/câu chuyện từ transcript.
-- `MEDIA_FILE_READY_UNINSPECTED`: đã có file video thật nhưng chưa xem frame.
-- `VISUAL_FRAMES_READY`: đã tạo frame nhưng Ake chưa mở xem.
-- `VISUAL_REVIEW`: Ake đã thực sự xem frame/contact sheet.
-- `MULTIMODAL_REVIEW`: đã có cả bằng chứng hình + âm thanh/nội dung.
+- `METADATA_ONLY`: link/title/số liệu.
+- `TRANSCRIPT_L2`: lời nói/câu chuyện từ transcript.
+- `MEDIA_FILE_READY_UNINSPECTED`: file thật tồn tại nhưng chưa đọc media.
+- `VISUAL_FRAMES_READY`: frame đã tạo nhưng Ake chưa mở.
+- `VISUAL_REVIEW`: Ake đã xem frame/contact sheet.
+- `DEEP_EVIDENCE_READY`: máy đã đo temporal visual + ASR + OCR + audio features/events.
+- `FULL_EDITOR_REVIEW`: chỉ được gắn sau khi Ake thực sự đọc evidence, xem visual cần thiết và giải thích các quyết định dựng bằng mức VERIFIED / STRONG INFERENCE / HYPOTHESIS / UNKNOWN.
 
-## Giới hạn
+## Luật chống bịa
 
-- 12 frame đủ để xác nhận bố cục lớn, facecam/gameplay, overlay, thay đổi reaction và các cảnh xuất hiện ở các mốc lấy mẫu.
-- 12 frame **không đủ** để khẳng định toàn bộ nhịp cắt, mọi zoom, toàn bộ meme/SFX/music hoặc câu hook nói.
-- Muốn kết luận âm thanh/lời nói phải có transcript/ASR/audio evidence riêng.
+- Scene detector/zoom detector/audio classifier là bằng chứng máy, không tự động biến thành kết luận editor.
+- Zoom/freeze từ OpenCV chỉ là **candidate** cho tới khi xem sequence xung quanh.
+- YAMNet cho xác suất loại âm thanh, không phải tên SFX chắc chắn.
+- BPM của librosa là BPM ước tính trên soundtrack trộn, không mặc định là BPM của BGM.
+- Tên bài nhạc chỉ ghi khi metadata/public evidence/fingerprint xác minh được; nếu không là `UNKNOWN`.
+- Transcript không chứng minh visual; frame không chứng minh audio.
+- Một video không chứng minh quy luật thuật toán hay retention.
 
-## QA đầu tiên đã PASS
+## QA visual đầu tiên
 
-Video test: Tabi Tuấn Anh — `ej0mSE14enA`.
-
-GitHub run: `41403501097`.
+Video: Tabi Tuấn Anh — `ej0mSE14enA`.
+Run visual: `41403501097`.
 
 Kết quả:
-- MP4 phân tích 1080×1920, ~24.64s.
-- 12/12 frame tạo thành công.
-- Contact sheet 4×3 tạo thành công.
-- Artifact tải lại và mở xem thành công.
+- MP4 1080×1920, ~24.64s.
+- 12/12 frame + contact sheet PASS.
+- Artifact tải và mở xem thành công.
 - Video nguồn không nằm trong artifact.
 
-Repo này là hạ tầng phân tích nội bộ của Ake, không phải công cụ reupload nội dung.
+## Request files
+
+- `request.json`: FAST visual pipeline.
+- `deep_request.json`: DEEP editor pipeline.
+- `run:false`: hàng đợi ở trạng thái nghỉ; không xử lý media.
