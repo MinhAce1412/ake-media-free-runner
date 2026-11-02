@@ -35,13 +35,16 @@ jobs:
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
             URL='${{ inputs.url }}'
             CONTENT_ID='${{ inputs.content_id }}'
+            MEDIA_URL=''
           else
             URL="$(python -c 'import json; print(json.load(open("request.json", encoding="utf-8"))["url"])')"
             CONTENT_ID="$(python -c 'import json; print(json.load(open("request.json", encoding="utf-8"))["content_id"])')"
+            MEDIA_URL="$(python -c 'import json; d=json.load(open("request.json", encoding="utf-8")); print(d.get("media_url", ""))')"
           fi
           [[ -n "$URL" && -n "$CONTENT_ID" ]]
           echo "url=$URL" >> "$GITHUB_OUTPUT"
           echo "content_id=$CONTENT_ID" >> "$GITHUB_OUTPUT"
+          echo "media_url=$MEDIA_URL" >> "$GITHUB_OUTPUT"
 
       - name: Install media tools
         run: |
@@ -50,7 +53,7 @@ jobs:
           python -m pip install --upgrade pip yt-dlp
 
       - name: Download public media and build evidence
-        run: bash scripts/analyze_public_media.sh '${{ steps.request.outputs.url }}' '${{ steps.request.outputs.content_id }}'
+        run: bash scripts/analyze_public_media.sh '${{ steps.request.outputs.url }}' '${{ steps.request.outputs.content_id }}' '${{ steps.request.outputs.media_url }}'
 
       - name: Upload evidence package only
         uses: actions/upload-artifact@v4
