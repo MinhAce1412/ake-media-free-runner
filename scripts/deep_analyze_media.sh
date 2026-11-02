@@ -42,6 +42,7 @@ fi
 python scripts/deep_editor_analysis.py "${ARGS[@]}"
 python scripts/refine_scene_evidence.py "$MEDIA" --evidence output/deep/deep_evidence.json --out output/deep
 python scripts/refine_multimodal_evidence.py "$MEDIA" --evidence output/deep/deep_evidence.json --out output/deep
+python scripts/asr_hallucination_guard.py --evidence output/deep/deep_evidence.json --out output/deep
 
 # Optional best-effort exact music candidate. It is never required for success and never overrides UNKNOWN without a match.
 SHAZAM_PYTHON="${AKE_SHAZAM_PYTHON:-}"
