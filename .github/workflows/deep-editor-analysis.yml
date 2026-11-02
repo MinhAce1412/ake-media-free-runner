@@ -28,6 +28,10 @@ on:
       - 'scripts/deep_*'
       - 'scripts/deep_requirements.txt'
       - 'scripts/refine_scene_evidence.py'
+      - 'scripts/refine_multimodal_evidence.py'
+      - 'scripts/asr_hallucination_guard.py'
+      - 'scripts/clap_sfx_refine.py'
+      - 'scripts/clap_requirements.txt'
       - 'scripts/music_candidate_id.py'
       - '.github/workflows/deep-editor-analysis.yml'
 
@@ -42,6 +46,7 @@ jobs:
       HF_HOME: ${{ github.workspace }}/.cache/huggingface
       AKE_WHISPER_MODEL: small
       AKE_SHAZAM_PYTHON: ${{ github.workspace }}/.shazam-venv/bin/python
+      AKE_CLAP_PYTHON: ${{ github.workspace }}/.clap-venv/bin/python
     steps:
       - uses: actions/checkout@v4
 
@@ -89,7 +94,7 @@ jobs:
           path: |
             .cache/huggingface
             .cache/tfhub
-          key: ake-deep-models-v1-${{ runner.os }}
+          key: ake-deep-models-v2-${{ runner.os }}
 
       - name: Install free media/editor tools
         if: steps.request.outputs.should_run == 'true'
@@ -106,6 +111,15 @@ jobs:
           python -m venv .shazam-venv
           .shazam-venv/bin/python -m pip install --upgrade pip
           .shazam-venv/bin/python -m pip install shazamio==0.8.1
+
+      - name: Install optional free CLAP SFX classifier separately
+        if: steps.request.outputs.should_run == 'true'
+        continue-on-error: true
+        run: |
+          python -m venv .clap-venv
+          .clap-venv/bin/python -m pip install --upgrade pip
+          .clap-venv/bin/python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          .clap-venv/bin/python -m pip install -r scripts/clap_requirements.txt
 
       - name: Acquire media and build deep editor evidence
         if: steps.request.outputs.should_run == 'true'
