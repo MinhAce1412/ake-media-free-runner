@@ -1,0 +1,61 @@
+name: Ake Public Media Analyze
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'Public YouTube/TikTok/Facebook video URL'
+        required: true
+        type: string
+      content_id:
+        description: 'Stable content/sample id'
+        required: true
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - 'request.json'
+      - 'scripts/**'
+      - '.github/workflows/analyze-public-video.yml'
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            URL='${{ inputs.url }}'
+            CONTENT_ID='${{ inputs.content_id }}'
+          else
+            URL="$(python -c 'import json; print(json.load(open("request.json", encoding="utf-8"))["url"])')"
+            CONTENT_ID="$(python -c 'import json; print(json.load(open("request.json", encoding="utf-8"))["content_id"])')"
+          fi
+          [[ -n "$URL" && -n "$CONTENT_ID" ]]
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "content_id=$CONTENT_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Install media tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg jq
+          python -m pip install --upgrade pip yt-dlp
+
+      - name: Download public media and build evidence
+        run: bash scripts/analyze_public_media.sh '${{ steps.request.outputs.url }}' '${{ steps.request.outputs.content_id }}'
+
+      - name: Upload evidence package only
+        uses: actions/upload-artifact@v4
+        with:
+          name: ake-media-${{ steps.request.outputs.content_id }}
+          path: output/
+          if-no-files-found: error
+          retention-days: 3
