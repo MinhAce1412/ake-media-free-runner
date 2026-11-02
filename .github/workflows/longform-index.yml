@@ -70,7 +70,7 @@ jobs:
         if: steps.request.outputs.run == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: ake-longform-${{ steps.request.outputs.content_id }}
+          name: ake-longform-${{ github.run_id }}
           path: output/longform/
           if-no-files-found: error
           retention-days: 3
