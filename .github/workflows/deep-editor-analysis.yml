@@ -129,7 +129,7 @@ jobs:
         if: steps.request.outputs.should_run == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: ake-deep-${{ steps.request.outputs.content_id }}
+          name: ake-deep-${{ github.run_id }}
           path: output/deep/
           if-no-files-found: error
           retention-days: 3
