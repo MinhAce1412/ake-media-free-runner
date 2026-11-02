@@ -36,26 +36,34 @@ jobs:
             URL='${{ inputs.url }}'
             CONTENT_ID='${{ inputs.content_id }}'
             MEDIA_URL=''
+            SHOULD_RUN='true'
           else
-            URL="$(python -c 'import json; print(json.load(open("request.json", encoding="utf-8"))["url"])')"
-            CONTENT_ID="$(python -c 'import json; print(json.load(open("request.json", encoding="utf-8"))["content_id"])')"
+            URL="$(python -c 'import json; d=json.load(open("request.json", encoding="utf-8")); print(d.get("url", ""))')"
+            CONTENT_ID="$(python -c 'import json; d=json.load(open("request.json", encoding="utf-8")); print(d.get("content_id", ""))')"
             MEDIA_URL="$(python -c 'import json; d=json.load(open("request.json", encoding="utf-8")); print(d.get("media_url", ""))')"
+            SHOULD_RUN="$(python -c 'import json; d=json.load(open("request.json", encoding="utf-8")); print(str(d.get("run", True)).lower())')"
           fi
-          [[ -n "$URL" && -n "$CONTENT_ID" ]]
+          echo "should_run=$SHOULD_RUN" >> "$GITHUB_OUTPUT"
           echo "url=$URL" >> "$GITHUB_OUTPUT"
           echo "content_id=$CONTENT_ID" >> "$GITHUB_OUTPUT"
           echo "media_url=$MEDIA_URL" >> "$GITHUB_OUTPUT"
+          if [[ "$SHOULD_RUN" == "true" ]]; then
+            [[ -n "$URL" && -n "$CONTENT_ID" ]]
+          fi
 
       - name: Install media tools
+        if: steps.request.outputs.should_run == 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg jq
           python -m pip install --upgrade pip yt-dlp
 
       - name: Download public media and build evidence
+        if: steps.request.outputs.should_run == 'true'
         run: bash scripts/analyze_public_media.sh '${{ steps.request.outputs.url }}' '${{ steps.request.outputs.content_id }}' '${{ steps.request.outputs.media_url }}'
 
       - name: Upload evidence package only
+        if: steps.request.outputs.should_run == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: ake-media-${{ steps.request.outputs.content_id }}
