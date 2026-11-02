@@ -1,40 +1,15 @@
 name: Ake Longform Index
 
 on:
-  workflow_dispatch:
-    inputs:
-      url:
-        description: 'Public YouTube/TikTok/Facebook video URL'
-        required: true
-        type: string
-      content_id:
-        description: 'Stable content id'
-        required: true
-        type: string
-      media_url:
-        description: 'Optional zero-credit bridge MP4 URL'
-        required: false
-        default: ''
-        type: string
-      max_windows:
-        description: 'Max candidate windows'
-        required: false
-        default: '20'
-        type: string
   push:
     branches: [main]
-    paths:
-      - 'longform_request.json'
-      - 'scripts/longform_index.py'
-      - 'scripts/longform_index.sh'
-      - '.github/workflows/longform-index.yml'
+    paths: ['longform_request.json','scripts/longform_index.py','scripts/longform_index.sh','.github/workflows/longform-index.yml']
 
 jobs:
   index:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    permissions:
-      contents: read
+    permissions: {contents: read}
     steps:
       - uses: actions/checkout@v4
       - name: Resolve request
@@ -42,30 +17,24 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
-            URL='${{ inputs.url }}'; ID='${{ inputs.content_id }}'; MEDIA='${{ inputs.media_url }}'; MAX='${{ inputs.max_windows }}'; RUN='true'
-          else
-            URL="$(python -c 'import json; d=json.load(open("longform_request.json")); print(d.get("url",""))')"
-            ID="$(python -c 'import json; d=json.load(open("longform_request.json")); print(d.get("content_id",""))')"
-            MEDIA="$(python -c 'import json; d=json.load(open("longform_request.json")); print(d.get("media_url",""))')"
-            MAX="$(python -c 'import json; d=json.load(open("longform_request.json")); print(d.get("max_windows",20))')"
-            RUN="$(python -c 'import json; d=json.load(open("longform_request.json")); print(str(d.get("run",False)).lower())')"
-          fi
-          echo "run=$RUN" >> "$GITHUB_OUTPUT"; echo "url=$URL" >> "$GITHUB_OUTPUT"; echo "content_id=$ID" >> "$GITHUB_OUTPUT"; echo "media_url=$MEDIA" >> "$GITHUB_OUTPUT"; echo "max_windows=$MAX" >> "$GITHUB_OUTPUT"
+          URL="$(python -c 'import json; d=json.load(open("longform_request.json")); print(d.get("url",""))')"
+          ID="$(python -c 'import json; d=json.load(open("longform_request.json")); print(d.get("content_id",""))')"
+          MEDIA="$(python -c 'import json; d=json.load(open("longform_request.json")); print(d.get("media_url",""))')"
+          MAX="$(python -c 'import json; d=json.load(open("longform_request.json")); print(d.get("max_windows",20))')"
+          EXPECTED="$(python -c 'import json; d=json.load(open("longform_request.json")); print(d.get("expected_duration",0))')"
+          RUN="$(python -c 'import json; d=json.load(open("longform_request.json")); print(str(d.get("run",False)).lower())')"
+          echo "run=$RUN" >> "$GITHUB_OUTPUT"; echo "url=$URL" >> "$GITHUB_OUTPUT"; echo "content_id=$ID" >> "$GITHUB_OUTPUT"; echo "media_url=$MEDIA" >> "$GITHUB_OUTPUT"; echo "max_windows=$MAX" >> "$GITHUB_OUTPUT"; echo "expected_duration=$EXPECTED" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-python@v5
         if: steps.request.outputs.run == 'true'
-        with:
-          python-version: '3.11'
+        with: {python-version: '3.11'}
       - name: Install lightweight index tools
         if: steps.request.outputs.run == 'true'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg tesseract-ocr tesseract-ocr-eng tesseract-ocr-vie
-          python -m pip install --upgrade pip
-          python -m pip install 'numpy<2' 'opencv-python-headless>=4.10' 'pytesseract>=0.3.13' yt-dlp
+          sudo apt-get update && sudo apt-get install -y ffmpeg tesseract-ocr tesseract-ocr-eng tesseract-ocr-vie
+          python -m pip install --upgrade pip && python -m pip install 'numpy<2' 'opencv-python-headless>=4.10' 'pytesseract>=0.3.13' yt-dlp
       - name: Build whole-VOD index
         if: steps.request.outputs.run == 'true'
-        run: bash scripts/longform_index.sh '${{ steps.request.outputs.url }}' '${{ steps.request.outputs.content_id }}' '${{ steps.request.outputs.media_url }}' '${{ steps.request.outputs.max_windows }}'
+        run: bash scripts/longform_index.sh '${{ steps.request.outputs.url }}' '${{ steps.request.outputs.content_id }}' '${{ steps.request.outputs.media_url }}' '${{ steps.request.outputs.max_windows }}' '${{ steps.request.outputs.expected_duration }}'
       - name: Upload index evidence
         if: steps.request.outputs.run == 'true'
         uses: actions/upload-artifact@v4
