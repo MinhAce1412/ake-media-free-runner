@@ -8,4 +8,3 @@ faster-whisper==1.2.1
 tensorflow-cpu==2.15.1
 tensorflow-hub==0.16.1
 tf-keras==2.15.1
-shazamio==0.8.1
