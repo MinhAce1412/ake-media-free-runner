@@ -15,7 +15,8 @@ on:
     branches: [main]
     paths:
       - 'request.json'
-      - 'scripts/**'
+      - 'scripts/analyze_public_media.sh'
+      - 'scripts/make_frame_times.py'
       - '.github/workflows/analyze-public-video.yml'
 
 jobs:
