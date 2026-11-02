@@ -1,1 +1,9 @@
-{"run":false,"url":"","content_id":"","media_url":"","start":0,"end":0,"expected_duration":0}
+{
+  "run": true,
+  "url": "https://www.youtube.com/watch?v=8jeAPbwromI",
+  "content_id": "youtube-8jeAPbwromI-seg-225-375-guarded",
+  "media_url": "https://storage.googleapis.com/vidiq-user-videos/3c017ffe-d104-41ff-833d-c3254604cd42/1cf56cc8-b042-4e88-a701-1e286ebd5ba6.mp4?GoogleAccessId=ai-proxy-20261001%40studious-pen-429.vid.io.iam.gserviceaccount.com&Expires=1794230527&Signature=SiIfgBvI4CxTQlaanNfHe9apMnVMmBdEOzfqqwcbSYBE1qAAjXZpg%2FQBNr4BEQh3ZzeXAexhodC5OS4ZJB2bZJcWEVnHlTjUlt4SjIEoHksRpuozYKTwvTAO249GCWhM8Y88uYL9bh3cX%2BJZIJyvW4RFVpZ4lYck%2BYskY%2BNC20li3U2rIKRt4VF8AsowrZMw6L63l8yaPWhy2S%2BWFohbcaj3putWGhakV7p9RFTpeYWe8%2FZMK2wDjY2Ym0nzar4u%2B2jULoaBtUGbXw9YI%2F0yLjF4V17IyLKcbo1CRGgvJuR4dcq%2FNvvhTQEf7vOLfMqZEERaB18VNIpgGnJ38CgRvw%3D%3D",
+  "start": 225,
+  "end": 375,
+  "expected_duration": 1309
+}
