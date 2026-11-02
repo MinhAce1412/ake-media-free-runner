@@ -2,80 +2,96 @@
 
 Runner miễn phí để Ake **xem, nghe và phân tích** video public phục vụ nghiên cứu content/đối thủ. Repo chỉ chứa code và evidence phân tích; không dùng để reupload nội dung.
 
-## Hai tầng
+## Ba tầng
 
 ### FAST — sàng lọc
 - Metadata/public metrics.
 - 12 frame + contact sheet khi cần xác minh hình.
 - Dùng để chọn video nào đáng tốn công phân tích sâu.
 
+### LONGFORM INDEX — quét toàn VOD/livestream
+Dùng trước DEEP cho video dài.
+- Quét toàn duration bằng frame sampling thưa, OCR context, visual-change và audio-energy signals.
+- Dùng non-maximum suppression + time buckets để tạo **nhiều candidate windows tách biệt**, tránh peak dày kéo dính cả VOD.
+- Xuất whole-timeline contact sheet + `candidate_windows.json`.
+- Đây chỉ là **discovery evidence**: không tự gán content type/story/clip quality.
+- Selected windows vẫn phải chạy DEEP multimodal trước khi `TRAINING_APPROVED` hoặc đưa clip recommendation cuối.
+
 ### DEEP — mổ xẻ như editor
-Chỉ chạy cho video đáng học hoặc content Minh sắp áp dụng.
+Chỉ chạy cho video/cửa sổ đáng học hoặc content Minh sắp áp dụng.
 
 Pipeline DEEP hiện gồm:
-- **PySceneDetect**: tìm ranh giới hình/cảnh nghi ngờ. Không mặc định đó là editor cut vì gameplay/UI cũng có thể kích hoạt detector.
-- **OpenCV**: motion spike, freeze/zoom candidate và các thay đổi hình theo thời gian.
-- **Tesseract vie+eng**: OCR chữ/caption/overlay ở frame mẫu.
-- **faster-whisper CPU INT8**: transcript có timestamp, chạy cả VAD và no-VAD rồi qua bộ chống nghe nhầm.
-- **ASR hallucination guard**: đối chiếu độ phủ transcript với tín hiệu speech/music độc lập; nếu ASR nghe ra lời dài trong đoạn chủ yếu là nhạc thì quay về bản VAD thận trọng hơn.
-- **librosa**: onset, silence, thay đổi năng lượng và BPM ước tính của soundtrack trộn.
-- **YAMNet / AudioSet 521 classes**: speech/music và audio-event candidate.
-- **CLAP zero-shot**: chỉ kiểm tra các cửa sổ nghi ngờ quanh boundary/energy spike với nhãn như whoosh, impact, pop, chime, game audio…; output vẫn chỉ là candidate, không phải tên SFX chắc chắn.
-- **ShazamIO best-effort**: thử nhận diện track; không match thì tên nhạc bắt buộc `UNKNOWN`.
+- **PySceneDetect**: tìm ranh giới hình/cảnh nghi ngờ; không mặc định là editor cut.
+- **OpenCV**: motion spike, freeze/zoom candidate và thay đổi hình theo thời gian.
+- **Tesseract vie+eng**: OCR chữ/caption/overlay.
+- **faster-whisper CPU INT8**: transcript timestamp, VAD + no-VAD và hallucination guard.
+- **ASR hallucination guard**: đối chiếu transcript với speech/music độc lập.
+- **librosa**: onset, silence, energy và BPM ước tính của soundtrack trộn.
+- **YAMNet / AudioSet**: speech/music/audio-event candidate.
+- **CLAP zero-shot**: kiểm tra SFX semantic candidate quanh các mốc nghi ngờ; không tự biến thành exact SFX proof.
+- **ShazamIO best-effort**: thử nhận diện track; không match/corroborate thì `UNKNOWN`.
 - **FFmpeg/FFprobe**: decode, audio extraction, codec/duration.
 
-Một DEEP job phân tích tối đa 180 giây. Video dài hơn phải chia chunk/chapter để giữ thời gian chạy và free compute hợp lý.
+Một DEEP job phân tích tối đa 180 giây. Video dài dùng `LONGFORM INDEX -> chọn window -> DEEP`, thay vì cố mổ nhiều giờ trong một job.
 
 ## Cách lấy video
-
-1. Ake có URL video public.
-2. Thử đường public trực tiếp trước.
-3. Nếu GitHub bị YouTube chặn anti-bot/login, **không dùng cookie, tài khoản hay cách vượt CAPTCHA**.
-4. Khi có thể, dùng `vidIQ video_upload` giá **0 credit** làm cầu chuyển MP4 tạm.
-5. GitHub Actions xử lý media rồi xóa file nguồn trước khi upload artifact.
+1. URL public.
+2. Thử public route trực tiếp.
+3. Nếu GitHub bị YouTube anti-bot/login, **không dùng cookie/tài khoản/CAPTCHA bypass**.
+4. Khi khả dụng dùng `vidIQ video_upload` **0 credit** làm cầu MP4 tạm.
+5. Source media là transient và bị xóa trước artifact upload.
 
 ## Mức bằng chứng
-
-- `METADATA_ONLY`: link/title/số liệu.
-- `TRANSCRIPT_L2`: lời nói/câu chuyện từ transcript.
-- `MEDIA_FILE_READY_UNINSPECTED`: file thật tồn tại nhưng chưa đọc media.
-- `VISUAL_FRAMES_READY`: frame đã tạo nhưng Ake chưa mở.
-- `VISUAL_REVIEW`: Ake đã xem frame/contact sheet.
-- `MULTIMODAL_MACHINE_EVIDENCE_READY`: máy đã đo temporal visual + OCR + guarded ASR + audio/music/SFX candidates.
-- `FULL_EDITOR_REVIEW`: chỉ được gắn sau khi Ake thực sự mở visual proof, đối chiếu audio/transcript và giải thích mỗi điểm quan trọng theo **WHAT → WHY HERE → tác dụng với người xem/câu chuyện → KEEP/ADAPT/SKIP cho Minh → mức chắc**.
+- `METADATA_ONLY`
+- `TRANSCRIPT_L2`
+- `MEDIA_FILE_READY_UNINSPECTED`
+- `VISUAL_FRAMES_READY`
+- `VISUAL_REVIEW`
+- `LONGFORM_INDEX_EVIDENCE_READY`: toàn VOD đã được index nhưng chưa được phép gán semantic content.
+- `MULTIMODAL_MACHINE_EVIDENCE_READY`
+- `FULL_EDITOR_REVIEW`: Ake đã mở visual proof, đối chiếu audio/transcript và giải thích **WHAT → WHY HERE → viewer/story effect → KEEP/ADAPT/SKIP → confidence**.
 
 ## Luật chống bịa
-
-- Scene detector/zoom detector/audio classifier là bằng chứng máy, không tự động biến thành kết luận editor.
-- Zoom/freeze từ OpenCV chỉ là **candidate** cho tới khi xem sequence xung quanh.
-- YAMNet/CLAP cho candidate loại âm thanh, không phải tên SFX/sample chắc chắn.
-- BPM của librosa là BPM ước tính trên soundtrack trộn, không mặc định là BPM của BGM.
-- Tên bài nhạc chỉ ghi khi metadata/public evidence/fingerprint xác minh được; nếu không là `UNKNOWN`.
-- Transcript phải qua hallucination guard trước khi dùng; proper noun vẫn phải thận trọng.
+- Detector/classifier là machine evidence, không tự động thành kết luận editor.
+- Longform peaks/OCR chỉ chọn nơi cần xem sâu, không phải content truth.
+- Machine scene boundary không mặc định là cut.
+- Zoom/freeze chỉ là candidate cho tới khi xem sequence.
+- YAMNet/CLAP không chứng minh exact SFX/sample.
+- BPM là mixed-audio estimate nếu chưa tách/verify BGM.
+- Tên track không có independent match thì `UNKNOWN`.
+- Transcript phải qua hallucination guard; proper noun vẫn thận trọng.
 - Transcript không chứng minh visual; frame không chứng minh audio.
-- Một video không chứng minh quy luật thuật toán hay retention.
+- Một video không chứng minh rule/retention/causality.
 
 ## QA đã chạy thật
 
 ### Tabi Tuấn Anh — `ej0mSE14enA`
-- Run visual: `41403501097`.
-- MP4 1080×1920, ~24.64s.
-- 12/12 frame + contact sheet PASS.
-- Artifact tải và mở xem thành công.
-- Đã tạo FULL_EDITOR_REVIEW historical-format reference.
+- Run visual `41403501097`, ~24.64s, 12/12 frame + contact sheet PASS.
+- FULL_EDITOR_REVIEW historical-format reference.
 
 ### Vodka Quang — `44pw-c1jXjQ`
-- Final DEEP run: `41411472832`.
-- Artifact: `13124944734`.
-- Duration ~31.37s.
-- Dense timeline + visual boundaries + OCR + guarded ASR + YAMNet + mixed-audio dynamics + CLAP + ShazamIO đều chạy.
-- Hallucination guard đã phát hiện và loại một transcript no-VAD dài giả vì audio độc lập cho thấy music mạnh ~92.3% còn speech rõ chỉ ~7.7%.
-- CLAP test 12 cửa sổ; chỉ nhận một candidate game-audio quanh ~5.5s. Reveal ~15s không đủ bằng chứng để gọi whoosh/impact/pop nên giữ `UNKNOWN`.
-- ShazamIO không match track, vì vậy tên nhạc = `UNKNOWN`.
-- Visual timeline đã được mở kiểm tra và kết quả đã ghi vào `editor_analysis` dưới `FULL_EDITOR_REVIEW`.
+- DEEP run `41411472832`, artifact `13124944734`, ~31.37s.
+- Dense visual + OCR + guarded ASR + audio dynamics + CLAP + ShazamIO PASS.
+- Hallucination ASR đã bị guard loại; exact reveal SFX/track giữ `UNKNOWN` khi thiếu bằng chứng.
+
+### Pwen TikTok — `7671984934738791701`
+- DEEP run `41429856497`, artifact `13134326735`, ~42.05s.
+- TikTok public direct acquisition PASS, không cookie/login.
+- Guarded ASR: vi ~0.997, speech coverage ~90.4%; YAMNet speech-dominant; CLAP 0/17 exact-SFX candidate accepted.
+- Visual/timeline proof đã mở thật.
+- Content được xác nhận multimodal là `EDUCATION / TACTICS / KEYBOARD FORMATION-RANK SETUP`, không dựa title riêng.
+- Đã ghi `TRAINING_APPROVED`; claim “Win 90%” chỉ lưu là creator claim, không causal proof.
+
+### Bình Be — whole-VOD 30:29
+- Fixed Longform Index run `41431580563`, artifact `13133719357`.
+- Duration `1829.338s`, 183 visual samples.
+- 16 selected visual peaks + 52 selected audio peaks sau NMS.
+- 16 candidate windows riêng biệt + whole-timeline contact sheet PASS.
+- Initial chain-clustering bug tạo 1 window quá lớn đã được phát hiện và sửa trước khi đánh dấu READY.
+- Index không tự gán semantic content; selected windows phải quay lại DEEP.
 
 ## Request files
-
 - `request.json`: FAST visual pipeline.
 - `deep_request.json`: DEEP editor pipeline.
-- `run:false`: hàng đợi ở trạng thái nghỉ; không xử lý media.
+- `longform_request.json`: whole-VOD indexing pipeline.
+- `run:false`: queue nghỉ, không xử lý media.
