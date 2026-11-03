@@ -1,11 +1,10 @@
 {
   "run": true,
-  "url": "https://www.youtube.com/watch?v=8jeAPbwromI",
-  "content_id": "youtube-8jeAPbwromI-seg-280-340-lean",
-  "media_url": "https://storage.googleapis.com/vidiq-user-videos/3c017ffe-d104-41ff-833d-c3254604cd42/1cf56cc8-b042-4e88-a701-1e286ebd5ba6.mp4?GoogleAccessId=ai-proxy-20261001%40studious-pen-429.vid.io.iam.gserviceaccount.com&Expires=1794230527&Signature=SiIfgBvI4CxTQlaanNfHe9apMnVMmBdEOzfqqwcbSYBE1qAAjXZpg%2FQBNr4BEQh3ZzeXAexhodC5OS4ZJB2bZJcWEVnHlTjUlt4SjIEoHksRpuozYKTwvTAO249GCWhM8Y88uYL9bh3cX%2BJZIJyvW4RFVpZ4lYck%2BYskY%2BNC20li3U2rIKRt4VF8AsowrZMw6L63l8yaPWhy2S%2BWFohbcaj3putWGhakV7p9RFTpeYWe8%2FZMK2wDjY2Ym0nzar4u%2B2jULoaBtUGbXw9YI%2F0yLjF4V17IyLKcbo1CRGgvJuR4dcq%2FNvvhTQEf7vOLfMqZEERaB18VNIpgGnJ38CgRvw%3D%3D",
-  "start": 280,
-  "end": 340,
-  "expected_duration": 1309,
+  "url": "https://www.youtube.com/watch?v=UJ39Vhf60BI",
+  "content_id": "youtube-UJ39Vhf60BI-seg-2985-3135",
+  "media_url": "https://storage.googleapis.com/vidiq-user-videos/3c017ffe-d104-41ff-833d-c3254604cd42/ba1a8e3f-6f7d-4d38-9232-5fb079badeb7.mp4?GoogleAccessId=ai-proxy-20261001%40studious-pen-429.vid.io.iam.gserviceaccount.com&Expires=1794280204&Signature=jfnfnsnhqzw6mWEMyhB68L%2BPEifh0DzxKZbjmiDbQAxyyNY%2BmmiUXsUeEHNJipXEAMqQcQiGnF2f9GFweApr5dEtbAOBre6YH7hrrieXsTEM2rsW9X4WqBhDfso3%2B4VTBFyyCnBEMecm%2Flvk%2BpgT88v4LZ01MnmmGrfhJBwNC955SeYw2xJhVYCOHty28e0p0yDPaEiqUibJpPpT5hAlRGYotTQcY%2Bgn%2FI6Kvp7HYhocDPsw3vp8pGoXiGyjlytpRbhi4%2BzBdpAhnOz1ohNq0hirAkI%2FpgLJjBk9%2FgMyVCSCk7BhZq5%2F%2BovwOK%2BIZ0O6twtHtoObOqc7Q1%2FGl5uHYw%3D%3D",
+  "start": 2985,
+  "end": 3135,
   "enable_clap": false,
   "enable_music_id": false
 }
