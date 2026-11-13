@@ -1,5 +1,15 @@
 # Ake Media Free Runner
 
+## Ake Zero-Cost Discovery (13/11/2026)
+
+- GitHub Actions `ake-discovery.yml`: chạy 11:23 Asia/Ho_Chi_Minh hằng ngày (04:23 UTC) bằng standard `ubuntu-latest` trên public repo; tối đa **1 video FAST/ngày**, không tự chạy DEEP.
+- `config/ake_youtube_sources.json`: 7 nguồn YouTube công khai đã có trong Ake DB; RSS chỉ gồm video gần đây, không đại diện toàn bộ thị trường FC Online/TikTok.
+- `scripts/ake_discover.py`: đọc RSS, kiểm identity nguồn, chống trùng **exact video ID** (không loại bỏ cả creator), giữ danh sách vào `data/ake_discovery_state.json`. Cập nhật source_health nội bộ nếu có quyền ghi.
+- Trạng thái: `DISCOVERED_METADATA_ONLY` / `PENDING` -> `FAST_EVIDENCE_READY` chỉ khi thực sự có 12 frames và contact sheet; `SOURCE_BLOCKED` hoặc `LONGFORM_PENDING_INDEX` nếu không đủ điều kiện. Mặc định `training_status=NOT_APPROVED`.
+- File nguồn video không được commit vào repo; FAST artifacts chỉ lưu 1 ngày. Nếu YouTube chặn nguồn public, không dùng cookie, CAPTCHA bypass hoặc API mất phí.
+- ChatGPT Ake Content Learner được hướng dẫn đọc file này và xác minh read-back vào Google Sheet `AKE_CREATOR_INTELLIGENCE_DB`; GitHub hoàn tất hoặc có metadata không đồng nghĩa đã học được video. `MINH 30M SYSTEM` là đường ghi đề xuất chỉ khi có bằng chứng và cần được xác minh đọc lại.
+- Giữ nguyên Site, URL, dữ liệu Owner; không tự đăng mạng xã hội, không thay đổi lịch 5 tác vụ Ake.
+
 Runner miễn phí để Ake **xem, nghe và phân tích** video public phục vụ nghiên cứu content/đối thủ. Repo chỉ chứa code và evidence phân tích; không dùng để reupload nội dung.
 
 ## Ba tầng
