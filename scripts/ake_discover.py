@@ -108,6 +108,7 @@ def discover(config_path, state_path, selection_path):
                     fresh += 1
             health.update({"status": "PUBLIC_RSS_READ", "last_success_at": iso(now()), "items_seen": len(entries), "new_items": fresh})
             health.pop("error_type", None)
+            health.pop("error_detail", None)
         except (OSError, ET.ParseError, ValueError) as err:
             health.update({"status": "SOURCE_UNAVAILABLE", "error_type": type(err).__name__, "error_detail": str(err)[:160]})
     state["videos"] = sorted(videos.values(), key=lambda v: (v["published_at"], v["video_id"]), reverse=True)[:MAX_SAVED]
