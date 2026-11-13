@@ -1,0 +1,51 @@
+{
+  "new_this_run": 0,
+  "schema_version": 1,
+  "scope": "public YouTube RSS monitored sources; NOT a TikTok/FC Online market census",
+  "sources": {
+    "UCCDKLfD32t-8ppoE6LBqqMA": {
+      "error_type": "ValueError",
+      "last_attempt_at": "2026-11-13T08:38:22Z",
+      "name": "Phạm Vịnh",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    "UCWLC4UagvBKasTBCSoQbdxQ": {
+      "error_type": "ValueError",
+      "last_attempt_at": "2026-11-13T08:38:22Z",
+      "name": "Tabi Tuấn Anh",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    "UCWmpyoClgWPeS3nlEq_zNHg": {
+      "error_type": "ValueError",
+      "last_attempt_at": "2026-11-13T08:38:22Z",
+      "name": "EDRIC",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    "UCYhCL52IT71aqnvmscI-aZw": {
+      "error_type": "ValueError",
+      "last_attempt_at": "2026-11-13T08:38:22Z",
+      "name": "DÒNG CHẢY FIFA",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    "UCcO_J-VypZTPF_sDMt4UUQA": {
+      "error_type": "ValueError",
+      "last_attempt_at": "2026-11-13T08:38:22Z",
+      "name": "NhamHam",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    "UCgTbqNc69VxtcKue9fpS3wA": {
+      "error_type": "ValueError",
+      "last_attempt_at": "2026-11-13T08:38:22Z",
+      "name": "Vodka Quang",
+      "status": "SOURCE_UNAVAILABLE"
+    },
+    "UChDE6Z1c6bsCqe4W_zcARqQ": {
+      "error_type": "ValueError",
+      "last_attempt_at": "2026-11-13T08:38:22Z",
+      "name": "Hangabap",
+      "status": "SOURCE_UNAVAILABLE"
+    }
+  },
+  "updated_at": "2026-11-13T08:38:23Z",
+  "videos": []
+}
