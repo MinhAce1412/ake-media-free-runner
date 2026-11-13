@@ -1,0 +1,69 @@
+name: Ake Zero-Cost Discovery
+
+on:
+  schedule:
+    # 11:23 Asia/Ho_Chi_Minh daily, before the existing 16:30 learner task
+    - cron: '23 4 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ake-discovery.yml'
+      - 'scripts/ake_discover.py'
+      - 'config/ake_youtube_sources.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ake-free-discovery
+  cancel-in-progress: false
+
+jobs:
+  discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Discover exact new public video IDs (metadata only)
+        id: discover
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/ake_discover.py discover
+          echo "has_candidate=$(python -c 'import json; print(str(json.load(open("output/ake_selection.json"))["has_candidate"]).lower())')" >> "$GITHUB_OUTPUT"
+      - name: Prepare free public FAST tools for one new video
+        if: steps.discover.outputs.has_candidate == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg jq
+          python -m pip install yt-dlp
+      - name: Attempt one guarded FAST, never auto-approve training
+        if: steps.discover.outputs.has_candidate == 'true'
+        run: python scripts/ake_discover.py fast
+      - name: Upload short-lived visual evidence (no source video)
+        if: success() && steps.discover.outputs.has_candidate == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ake-discovery-fast-${{ github.run_id }}
+          path: |
+            output/ake_evidence.json
+            output/ake_fast_outcome.json
+            output/contact_sheet.jpg
+            output/frames/frame_*.jpg
+          if-no-files-found: ignore
+          retention-days: 1
+      - name: Persist public metadata and gated evidence status
+        if: always() && steps.discover.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'ake-research-bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/ake_discovery_state.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'data: daily Ake public discovery and guarded FAST state [skip ci]'
+            git push origin HEAD:main
+          fi
