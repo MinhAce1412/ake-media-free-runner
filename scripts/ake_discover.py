@@ -108,7 +108,7 @@ def discover(config_path, state_path, selection_path):
             health.update({"status": "PUBLIC_RSS_READ", "last_success_at": iso(now()), "items_seen": len(entries), "new_items": fresh})
             health.pop("error_type", None)
         except (OSError, ET.ParseError, ValueError) as err:
-            health.update({"status": "SOURCE_UNAVAILABLE", "error_type": type(err).__name__})
+            health.update({"status": "SOURCE_UNAVAILABLE", "error_type": type(err).__name__, "error_detail": str(err)[:160]})
     state["videos"] = sorted(videos.values(), key=lambda v: (v["published_at"], v["video_id"]), reverse=True)[:MAX_SAVED]
     state.update({"updated_at": iso(now()), "new_this_run": added, "scope": "public YouTube RSS monitored sources; NOT a TikTok/FC Online market census"})
     available = [v for v in state["videos"] if v.get("fast_status") == "PENDING"]
