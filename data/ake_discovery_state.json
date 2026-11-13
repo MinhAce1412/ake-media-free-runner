@@ -1,73 +1,66 @@
 {
-  "new_this_run": 105,
+  "new_this_run": 0,
   "schema_version": 1,
   "scope": "public YouTube RSS monitored sources; NOT a TikTok/FC Online market census",
   "sources": {
     "UCCDKLfD32t-8ppoE6LBqqMA": {
-      "error_detail": "Feed channel identity mismatch expected=UCCDKLfD32t-8ppoE6LBqqMA actual=CDKLfD32t-8ppoE6LBqqMA",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:40:54Z",
-      "last_success_at": "2026-11-13T08:40:54Z",
+      "last_attempt_at": "2026-11-13T08:43:22Z",
+      "last_success_at": "2026-11-13T08:43:23Z",
       "name": "Phạm Vịnh",
-      "new_items": 15,
+      "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     },
     "UCWLC4UagvBKasTBCSoQbdxQ": {
-      "error_detail": "Feed channel identity mismatch expected=UCWLC4UagvBKasTBCSoQbdxQ actual=WLC4UagvBKasTBCSoQbdxQ",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:40:54Z",
-      "last_success_at": "2026-11-13T08:40:54Z",
+      "last_attempt_at": "2026-11-13T08:43:22Z",
+      "last_success_at": "2026-11-13T08:43:22Z",
       "name": "Tabi Tuấn Anh",
-      "new_items": 15,
+      "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     },
     "UCWmpyoClgWPeS3nlEq_zNHg": {
-      "error_detail": "Feed channel identity mismatch expected=UCWmpyoClgWPeS3nlEq_zNHg actual=WmpyoClgWPeS3nlEq_zNHg",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:40:54Z",
-      "last_success_at": "2026-11-13T08:40:54Z",
+      "last_attempt_at": "2026-11-13T08:43:23Z",
+      "last_success_at": "2026-11-13T08:43:24Z",
       "name": "EDRIC",
-      "new_items": 15,
+      "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     },
     "UCYhCL52IT71aqnvmscI-aZw": {
-      "error_detail": "Feed channel identity mismatch expected=UCYhCL52IT71aqnvmscI-aZw actual=YhCL52IT71aqnvmscI-aZw",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:40:54Z",
-      "last_success_at": "2026-11-13T08:40:54Z",
+      "last_attempt_at": "2026-11-13T08:43:23Z",
+      "last_success_at": "2026-11-13T08:43:23Z",
       "name": "DÒNG CHẢY FIFA",
-      "new_items": 15,
+      "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     },
     "UCcO_J-VypZTPF_sDMt4UUQA": {
-      "error_detail": "Feed channel identity mismatch expected=UCcO_J-VypZTPF_sDMt4UUQA actual=cO_J-VypZTPF_sDMt4UUQA",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:40:54Z",
-      "last_success_at": "2026-11-13T08:40:54Z",
+      "last_attempt_at": "2026-11-13T08:43:23Z",
+      "last_success_at": "2026-11-13T08:43:23Z",
       "name": "NhamHam",
-      "new_items": 15,
+      "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     },
     "UCgTbqNc69VxtcKue9fpS3wA": {
-      "error_detail": "Feed channel identity mismatch expected=UCgTbqNc69VxtcKue9fpS3wA actual=gTbqNc69VxtcKue9fpS3wA",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:40:54Z",
-      "last_success_at": "2026-11-13T08:40:54Z",
+      "last_attempt_at": "2026-11-13T08:43:22Z",
+      "last_success_at": "2026-11-13T08:43:22Z",
       "name": "Vodka Quang",
-      "new_items": 15,
+      "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     },
     "UChDE6Z1c6bsCqe4W_zcARqQ": {
-      "error_detail": "Feed channel identity mismatch expected=UChDE6Z1c6bsCqe4W_zcARqQ actual=hDE6Z1c6bsCqe4W_zcARqQ",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:40:54Z",
-      "last_success_at": "2026-11-13T08:40:54Z",
+      "last_attempt_at": "2026-11-13T08:43:23Z",
+      "last_success_at": "2026-11-13T08:43:23Z",
       "name": "Hangabap",
-      "new_items": 15,
+      "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     }
   },
-  "updated_at": "2026-11-13T08:41:24Z",
+  "updated_at": "2026-11-13T08:43:48Z",
   "videos": [
     {
       "content_key": "youtube:xDs5rJaPdKU",
@@ -90,15 +83,18 @@
       "content_key": "youtube:qAC2sijUkfs",
       "creator_name": "Phạm Vịnh",
       "evidence_level": "METADATA_ONLY",
-      "fast_attempts": 0,
-      "fast_status": "PENDING",
+      "fast_attempts": 1,
+      "fast_last_attempt_at": "2026-11-13T08:43:48Z",
+      "fast_reason": "METADATA_SOURCE_UNAVAILABLE",
+      "fast_status": "SOURCE_BLOCKED",
       "first_seen_at": "2026-11-13T08:40:54Z",
       "published_at": "2026-11-13T07:55:03Z",
       "source_channel_id": "UCCDKLfD32t-8ppoE6LBqqMA",
       "title": "Cặp CB đườn đại vừa chậm, vừa yếu, vừa ngoo :)) #fconline #allstarvietnam2026",
       "training_status": "NOT_APPROVED",
       "url": "https://www.youtube.com/watch?v=qAC2sijUkfs",
-      "video_id": "qAC2sijUkfs"
+      "video_id": "qAC2sijUkfs",
+      "workflow_run_id": "43395429466"
     },
     {
       "content_key": "youtube:sBpYkRfFx0o",
