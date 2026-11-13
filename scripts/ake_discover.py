@@ -46,7 +46,7 @@ def parse_feed(xml_bytes, expected_channel):
     result = []
     channel = root.findtext(f"{{{YT}}}channelId")
     if channel and channel != expected_channel:
-        raise ValueError("Feed channel identity mismatch")
+        raise ValueError(f"Feed channel identity mismatch expected={expected_channel} actual={channel}")
     for entry in root.findall(f"{{{ATOM}}}entry"):
         video_id = entry.findtext(f"{{{YT}}}videoId")
         entry_channel = entry.findtext(f"{{{YT}}}channelId")
