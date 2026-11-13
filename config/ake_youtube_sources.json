@@ -1,0 +1,33 @@
+{
+  "description": "Public YouTube channels grounded in AKE_CREATOR_INTELLIGENCE_DB. Monitoring each video, not deduping entire creators. Feeds expose only recent uploads, not a full archive.",
+  "channels": [
+    {
+      "channel_id": "UCWLC4UagvBKasTBCSoQbdxQ",
+      "name": "Tabi Tuấn Anh"
+    },
+    {
+      "channel_id": "UCgTbqNc69VxtcKue9fpS3wA",
+      "name": "Vodka Quang"
+    },
+    {
+      "channel_id": "UCCDKLfD32t-8ppoE6LBqqMA",
+      "name": "Phạm Vịnh"
+    },
+    {
+      "channel_id": "UCcO_J-VypZTPF_sDMt4UUQA",
+      "name": "NhamHam"
+    },
+    {
+      "channel_id": "UCYhCL52IT71aqnvmscI-aZw",
+      "name": "DÒNG CHẢY FIFA"
+    },
+    {
+      "channel_id": "UChDE6Z1c6bsCqe4W_zcARqQ",
+      "name": "Hangabap"
+    },
+    {
+      "channel_id": "UCWmpyoClgWPeS3nlEq_zNHg",
+      "name": "EDRIC"
+    }
+  ]
+}
