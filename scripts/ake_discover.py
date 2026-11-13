@@ -113,7 +113,17 @@ def discover(config_path, state_path, selection_path):
             health.update({"status": "SOURCE_UNAVAILABLE", "error_type": type(err).__name__, "error_detail": str(err)[:160]})
     state["videos"] = sorted(videos.values(), key=lambda v: (v["published_at"], v["video_id"]), reverse=True)[:MAX_SAVED]
     state.update({"updated_at": iso(now()), "new_this_run": added, "scope": "public YouTube RSS monitored sources; NOT a TikTok/FC Online market census"})
-    available = [v for v in state["videos"] if v.get("fast_status") == "PENDING"]
+    # Retry a temporary public-source block at most once after 7 days; never loop daily.
+    for v in state["videos"]:
+        if v.get("fast_status") == "SOURCE_BLOCKED" and 0 < v.get("fast_attempts", 0) < 2:
+            try:
+                last = dt.datetime.fromisoformat(v["fast_last_attempt_at"].replace("Z", "+00:00"))
+                if now() - last >= dt.timedelta(days=7):
+                    v["fast_status"] = "PENDING"
+            except (KeyError, ValueError, TypeError):
+                pass
+    available = [v for v in state["videos"] if v.get("fast_status") == "PENDING" and
+                 now() - dt.datetime.fromisoformat(v["published_at"].replace("Z", "+00:00")) <= dt.timedelta(days=MAX_AGE_DAYS)]
     selected = available[0] if available else None
     selection = {"has_candidate": bool(selected), "content_key": selected["content_key"] if selected else None,
                  "url": selected["url"] if selected else None,
