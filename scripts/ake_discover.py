@@ -45,14 +45,15 @@ def parse_feed(xml_bytes, expected_channel):
     root = ET.fromstring(xml_bytes)
     result = []
     channel = root.findtext(f"{{{YT}}}channelId")
-    if channel and channel != expected_channel:
+    # YouTube RSS currently exposes the channel key both with and without the UC prefix.
+    if channel and channel not in (expected_channel, expected_channel[2:]):
         raise ValueError(f"Feed channel identity mismatch expected={expected_channel} actual={channel}")
     for entry in root.findall(f"{{{ATOM}}}entry"):
         video_id = entry.findtext(f"{{{YT}}}videoId")
         entry_channel = entry.findtext(f"{{{YT}}}channelId")
         if not video_id or not VIDEO_ID.fullmatch(video_id):
             continue
-        if entry_channel and entry_channel != expected_channel:
+        if entry_channel and entry_channel not in (expected_channel, expected_channel[2:]):
             continue
         published = entry.findtext(f"{{{ATOM}}}published", "")
         title = entry.findtext(f"{{{ATOM}}}title", "")
