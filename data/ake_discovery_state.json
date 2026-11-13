@@ -5,62 +5,62 @@
   "sources": {
     "UCCDKLfD32t-8ppoE6LBqqMA": {
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:43:22Z",
-      "last_success_at": "2026-11-13T08:43:23Z",
+      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_success_at": "2026-11-13T08:52:40Z",
       "name": "Phạm Vịnh",
       "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     },
     "UCWLC4UagvBKasTBCSoQbdxQ": {
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:43:22Z",
-      "last_success_at": "2026-11-13T08:43:22Z",
+      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_success_at": "2026-11-13T08:52:40Z",
       "name": "Tabi Tuấn Anh",
       "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     },
     "UCWmpyoClgWPeS3nlEq_zNHg": {
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:43:23Z",
-      "last_success_at": "2026-11-13T08:43:24Z",
+      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_success_at": "2026-11-13T08:52:40Z",
       "name": "EDRIC",
       "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     },
     "UCYhCL52IT71aqnvmscI-aZw": {
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:43:23Z",
-      "last_success_at": "2026-11-13T08:43:23Z",
+      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_success_at": "2026-11-13T08:52:40Z",
       "name": "DÒNG CHẢY FIFA",
       "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     },
     "UCcO_J-VypZTPF_sDMt4UUQA": {
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:43:23Z",
-      "last_success_at": "2026-11-13T08:43:23Z",
+      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_success_at": "2026-11-13T08:52:40Z",
       "name": "NhamHam",
       "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     },
     "UCgTbqNc69VxtcKue9fpS3wA": {
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:43:22Z",
-      "last_success_at": "2026-11-13T08:43:22Z",
+      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_success_at": "2026-11-13T08:52:40Z",
       "name": "Vodka Quang",
       "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     },
     "UChDE6Z1c6bsCqe4W_zcARqQ": {
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:43:23Z",
-      "last_success_at": "2026-11-13T08:43:23Z",
+      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_success_at": "2026-11-13T08:52:40Z",
       "name": "Hangabap",
       "new_items": 0,
       "status": "PUBLIC_RSS_READ"
     }
   },
-  "updated_at": "2026-11-13T08:43:48Z",
+  "updated_at": "2026-11-13T08:53:07Z",
   "videos": [
     {
       "content_key": "youtube:xDs5rJaPdKU",
@@ -100,15 +100,18 @@
       "content_key": "youtube:sBpYkRfFx0o",
       "creator_name": "Hangabap",
       "evidence_level": "METADATA_ONLY",
-      "fast_attempts": 0,
-      "fast_status": "PENDING",
+      "fast_attempts": 1,
+      "fast_last_attempt_at": "2026-11-13T08:53:07Z",
+      "fast_reason": "METADATA_SOURCE_UNAVAILABLE",
+      "fast_status": "SOURCE_BLOCKED",
       "first_seen_at": "2026-11-13T08:40:54Z",
       "published_at": "2026-11-13T07:31:29Z",
       "source_channel_id": "UChDE6Z1c6bsCqe4W_zcARqQ",
       "title": "Ông Vua PowerShot Sang Junior 🔥",
       "training_status": "NOT_APPROVED",
       "url": "https://www.youtube.com/watch?v=sBpYkRfFx0o",
-      "video_id": "sBpYkRfFx0o"
+      "video_id": "sBpYkRfFx0o",
+      "workflow_run_id": "43396665762"
     },
     {
       "content_key": "youtube:PQ6ckGy4UJU",
