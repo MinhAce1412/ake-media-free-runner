@@ -4,63 +4,77 @@
   "scope": "public YouTube RSS monitored sources; NOT a TikTok/FC Online market census",
   "sources": {
     "UCCDKLfD32t-8ppoE6LBqqMA": {
+      "error_detail": "HTTP Error 404: Not Found",
+      "error_type": "HTTPError",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_attempt_at": "2026-11-14T05:15:02Z",
       "last_success_at": "2026-11-13T08:52:40Z",
       "name": "Phạm Vịnh",
       "new_items": 0,
-      "status": "PUBLIC_RSS_READ"
+      "status": "SOURCE_UNAVAILABLE"
     },
     "UCWLC4UagvBKasTBCSoQbdxQ": {
+      "error_detail": "HTTP Error 404: Not Found",
+      "error_type": "HTTPError",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_attempt_at": "2026-11-14T05:15:02Z",
       "last_success_at": "2026-11-13T08:52:40Z",
       "name": "Tabi Tuấn Anh",
       "new_items": 0,
-      "status": "PUBLIC_RSS_READ"
+      "status": "SOURCE_UNAVAILABLE"
     },
     "UCWmpyoClgWPeS3nlEq_zNHg": {
+      "error_detail": "HTTP Error 404: Not Found",
+      "error_type": "HTTPError",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_attempt_at": "2026-11-14T05:15:03Z",
       "last_success_at": "2026-11-13T08:52:40Z",
       "name": "EDRIC",
       "new_items": 0,
-      "status": "PUBLIC_RSS_READ"
+      "status": "SOURCE_UNAVAILABLE"
     },
     "UCYhCL52IT71aqnvmscI-aZw": {
+      "error_detail": "HTTP Error 404: Not Found",
+      "error_type": "HTTPError",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_attempt_at": "2026-11-14T05:15:03Z",
       "last_success_at": "2026-11-13T08:52:40Z",
       "name": "DÒNG CHẢY FIFA",
       "new_items": 0,
-      "status": "PUBLIC_RSS_READ"
+      "status": "SOURCE_UNAVAILABLE"
     },
     "UCcO_J-VypZTPF_sDMt4UUQA": {
+      "error_detail": "HTTP Error 404: Not Found",
+      "error_type": "HTTPError",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_attempt_at": "2026-11-14T05:15:03Z",
       "last_success_at": "2026-11-13T08:52:40Z",
       "name": "NhamHam",
       "new_items": 0,
-      "status": "PUBLIC_RSS_READ"
+      "status": "SOURCE_UNAVAILABLE"
     },
     "UCgTbqNc69VxtcKue9fpS3wA": {
+      "error_detail": "HTTP Error 404: Not Found",
+      "error_type": "HTTPError",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_attempt_at": "2026-11-14T05:15:02Z",
       "last_success_at": "2026-11-13T08:52:40Z",
       "name": "Vodka Quang",
       "new_items": 0,
-      "status": "PUBLIC_RSS_READ"
+      "status": "SOURCE_UNAVAILABLE"
     },
     "UChDE6Z1c6bsCqe4W_zcARqQ": {
+      "error_detail": "HTTP Error 404: Not Found",
+      "error_type": "HTTPError",
       "items_seen": 15,
-      "last_attempt_at": "2026-11-13T08:52:40Z",
+      "last_attempt_at": "2026-11-14T05:15:03Z",
       "last_success_at": "2026-11-13T08:52:40Z",
       "name": "Hangabap",
       "new_items": 0,
-      "status": "PUBLIC_RSS_READ"
+      "status": "SOURCE_UNAVAILABLE"
     }
   },
-  "updated_at": "2026-11-13T08:53:07Z",
+  "updated_at": "2026-11-14T05:15:33Z",
   "videos": [
     {
       "content_key": "youtube:xDs5rJaPdKU",
@@ -117,15 +131,18 @@
       "content_key": "youtube:PQ6ckGy4UJU",
       "creator_name": "EDRIC",
       "evidence_level": "METADATA_ONLY",
-      "fast_attempts": 0,
-      "fast_status": "PENDING",
+      "fast_attempts": 1,
+      "fast_last_attempt_at": "2026-11-14T05:15:33Z",
+      "fast_reason": "METADATA_SOURCE_UNAVAILABLE",
+      "fast_status": "SOURCE_BLOCKED",
       "first_seen_at": "2026-11-13T08:40:54Z",
       "published_at": "2026-11-13T05:04:22Z",
       "source_channel_id": "UCWmpyoClgWPeS3nlEq_zNHg",
       "title": "Mở thẻ 23HW +8 +11 #FCOnline #BacThayReviewFCOnline #DapMoTheFCOnline #CreatorMarathonFCO",
       "training_status": "NOT_APPROVED",
       "url": "https://www.youtube.com/watch?v=PQ6ckGy4UJU",
-      "video_id": "PQ6ckGy4UJU"
+      "video_id": "PQ6ckGy4UJU",
+      "workflow_run_id": "43560603769"
     },
     {
       "content_key": "youtube:kx9SiVRg4Wg",
